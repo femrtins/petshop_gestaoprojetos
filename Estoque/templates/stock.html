@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #searchBar {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        table {
+            width: 90%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        th {
+            background-color: #ffff80;
+            color: #000;
+            position: relative;
+        }
+
+        .sort-icon {
+            font-size: 0.8em;
+            margin-left: 8px;
+            position: absolute;
+            right: 10px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1> Estoque </h1>
+
+    <!-- Barra de pesquisa -->
+    <input type="text" id="searchBar" placeholder="Procurar por nome..." onkeyup="filterTable()">
+
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Nome<span class="sort-icon"></span></th>
+                <th onclick="sortTable(1)">Quantidade Disponível<span class="sort-icon"></span></th>
+                <th onclick="sortTable(2)">Preço<span class="sort-icon"></span></th>
+                <th onclick="sortTable(3)">Categoria<span class="sort-icon"></span></th>
+                <th onclick="sortTable(4)">Descrição<span class="sort-icon"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Inteira pela data completando as linhas com os produtos do BD -->
+            {% for row in data %}
+                <tr>
+                    <td><a href="{{ url_for('editar_item', item_id=row['id']) }}">{{ row["Nome"] }}</a></td>
+                    <td>{{ row["qnt"] }}</td>
+                    <td>{{ row["preco"] }}</td>
+                    <td>{{ row["categoria"] }}</td>
+                    <td>{{ row["descricao"] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        let currentSortIndex = -1;
+        let isAscending = true;
+
+        function sortTable(columnIndex) {
+            const table = document.getElementById("productTable");
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.rows);
+
+            const isNumeric = !isNaN(rows[0].cells[columnIndex].textContent.trim());
+            let sortedRows;
+
+            // Organiza as linhas com base no conteúdo da coluna
+            if (isNumeric) {
+                sortedRows = rows.sort((a, b) => {
+                    return parseFloat(a.cells[columnIndex].textContent) - parseFloat(b.cells[columnIndex].textContent);
+                });
+            } else {
+                sortedRows = rows.sort((a, b) => {
+                    return a.cells[columnIndex].textContent.localeCompare(b.cells[columnIndex].textContent);
+                });
+            }
+
+            // Alternar a ordem de organização se estiver clicando a mesma coluna novamente
+            if (currentSortIndex === columnIndex) {
+                isAscending = !isAscending;
+            } else {
+                isAscending = true;
+            }
+
+            // Inverta as linhas se for decrescente
+            if (!isAscending) {
+                sortedRows.reverse();
+            }
+
+            // Atualiza o índice de organização atual
+            currentSortIndex = columnIndex;
+
+            // Acrescenta linhas ordenadas ao "body" da tabela
+            tbody.append(...sortedRows);
+
+            // Muda os icones
+            updateSortIcons(columnIndex);
+        }
+
+        function updateSortIcons(columnIndex) {
+            const headers = document.querySelectorAll("th");
+            headers.forEach((header, index) => {
+                const icon = header.querySelector(".sort-icon");
+                if (icon) {
+                    if (index === columnIndex) {
+                        icon.textContent = isAscending ? "▲" : "▼";
+                    } else {
+                        icon.textContent = "";
+                    }
+                }
+            });
+        }
+
+        // Função para fazer a busca por nome do produto
+        function filterTable() {
+            const searchInput = document.getElementById("searchBar").value.toLowerCase();
+            const table = document.getElementById("productTable");
+            const rows = table.tBodies[0].rows;
+
+            Array.from(rows).forEach(row => {
+                const productName = row.cells[0].textContent.toLowerCase();
+                if (productName.includes(searchInput)) {
+                    row.classList.remove("hidden");
+                } else {
+                    row.classList.add("hidden");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
