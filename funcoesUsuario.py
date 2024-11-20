@@ -60,3 +60,7 @@ if __name__ == "__main__":
 
         resposta.headers.add("Access-Control-Allow-Origin", "*")
         return resposta
+
+    @app.route("/cadastrarAnimal", methods=['POST'])
+    def cadastrarAnimal():
+        dados = request.get_json()
