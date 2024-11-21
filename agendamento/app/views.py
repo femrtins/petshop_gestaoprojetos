@@ -65,6 +65,68 @@ def agendar():
     flash_errors(form)
     return render_template('agendar.html', form=form)
 
+@app.route('/del-agendamento', methods=['POST', 'GET'])
+def del_agendamento(id):
+    agendamento = Agendamento.query.get_or_404(id)
+    try:
+        db.session.delete(agendamento)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ocorreu um erro ao excluir o agendamento: {str(e)}')
+    
+    return redirect(url_for('listar_agendamentos'))
+
+@app.route('/edit-agendamento/<int:id>', methods=['POST', 'GET'])
+def edit_agendamento(id):
+    form = AgendamentoForm()    
+    colaboradores = Colaborador.query.all()
+    form.colaborador.choices = [(colaborador.id, colaborador.nome) for colaborador in colaboradores]
+    agendamento = Agendamento.query.get_or_404(id)
+
+    if request.method == 'POST':
+
+        cliente = form.cliente.data
+        tipo_servico = form.tipo_servico.data            
+        data = form.data.data 
+        horario_str = form.horario.data 
+        colaborador = form.colaborador.data
+
+        if data < datetime.today().date():
+                flash("Não é possível agendar para datas passadas. Escolha uma data válida.", "danger")
+                return redirect(url_for('agendar'))
+
+        
+        # Atualiza as informações do usuário
+        if cliente:
+            agendamento.cliente = cliente
+        if tipo_servico:   
+            agendamento.tipo_servico = tipo_servico      
+        if data and horario:
+            try:
+                horario = datetime.combine(data, datetime.strptime(horario_str, '%H:%M').time())
+            except ValueError:
+                flash("Erro ao combinar data e hora. Tente novamente.", "danger")
+                return redirect(url_for('agendar'))  
+            
+            if Agendamento.query.filter((Agendamento.colaborador_id == colaborador) & (Agendamento.horario >= horario - timedelta(hours=1)) & 
+                                    (Agendamento.horario <= horario + timedelta(hours=1))).first():
+                flash("Esse horário já está ocupado para o atendente selecionado. Escolha outro horário ou outro atendente.", "danger")
+                return redirect(url_for('agendar'))            
+            agendamento.horario = horario              
+        if colaborador:
+            agendamento.colaborador = colaborador
+        
+        # Salva as alterações no banco de dados
+        try:
+            db.session.commit()
+            flash('Informações do perfil atualizadas com sucesso!')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ocorreu um erro ao atualizar o perfil: {str(e)}')
+    return redirect(url_for('listar_agendamentos'))
+
+
 #  para adicionar um colaborador
 
 @app.route('/add-colaborador', methods=['POST', 'GET'])
