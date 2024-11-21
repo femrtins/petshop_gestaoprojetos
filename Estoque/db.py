@@ -15,6 +15,8 @@ def create_table_stock():
                         CATEGORIA TEXT,
                         DESCRICAO TEXT 
                                                             );""")
+        
+        con.commit()
     except:
         print("erro ao criar a tabela de estoque")
 
@@ -57,6 +59,42 @@ def process_data(data):
 
 def fetch_data_dic():
     return process_data(fetch_data())
+
+def fetch_data_by_id(id: int):
+    cur.execute(f"SELECT * FROM STOCK WHERE PK_ID= {id};")
+
+
+    raw_data = cur.fetchall()
+
+    return (raw_data[0])
+
+def item_to_dic(item):
+    dic_data = {    "id":        item[0],
+                    "Nome":      item[1],
+                    "qnt":       item[2],
+                    "preco":     item[3],
+                    "categoria": item[4],
+                    "descricao": item[5]
+                    }
+    
+    return dic_data
+
+
+def edit_by_id(item):
+    cur.execute(f"UPDATE STOCK SET NOME = '{item['Nome']}', \
+                QUANTIDADE_DISPONIVEL = {item['qnt']}, \
+                PRECO = {item['preco']}, \
+                CATEGORIA = '{item['categoria']}',\
+                DESCRICAO = '{item['descricao']}'\
+                WHERE PK_ID = {item['id']}")
+    
+    con.commit()
+
+
+def remove_item(item):
+    cur.execute(f"DELETE FROM STOCK WHERE PK_ID = {item};")
+
+    con.commit()
 
 create_table_stock()
 

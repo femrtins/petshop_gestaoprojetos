@@ -26,6 +26,29 @@
             font-size: 16px;
         }
 
+        .add-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .add-button:hover {
+            background-color: #218838;
+        }
+
+        .add-icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
         table {
             width: 90%;
             margin: 0 auto;
@@ -66,9 +89,15 @@
     </style>
 </head>
 <body>
-    <h1> Estoque </h1>
+    <h1>Estoque</h1>
 
-    <!-- Barra de pesquisa -->
+    <!-- Add Item Button -->
+    <a href="/stock_add" class="add-button">
+        <span class="add-icon">➕</span>
+        Adicionar Item
+    </a>
+
+    <!-- Search Bar -->
     <input type="text" id="searchBar" placeholder="Procurar por nome..." onkeyup="filterTable()">
 
     <table id="productTable">
@@ -82,7 +111,6 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Inteira pela data completando as linhas com os produtos do BD -->
             {% for row in data %}
                 <tr>
                     <td><a href="{{ url_for('editar_item', item_id=row['id']) }}">{{ row["Nome"] }}</a></td>
@@ -107,7 +135,7 @@
             const isNumeric = !isNaN(rows[0].cells[columnIndex].textContent.trim());
             let sortedRows;
 
-            // Organiza as linhas com base no conteúdo da coluna
+            // Sort rows based on column content
             if (isNumeric) {
                 sortedRows = rows.sort((a, b) => {
                     return parseFloat(a.cells[columnIndex].textContent) - parseFloat(b.cells[columnIndex].textContent);
@@ -118,25 +146,20 @@
                 });
             }
 
-            // Alternar a ordem de organização se estiver clicando a mesma coluna novamente
+            // Toggle sort order if clicking the same column
             if (currentSortIndex === columnIndex) {
                 isAscending = !isAscending;
             } else {
                 isAscending = true;
             }
 
-            // Inverta as linhas se for decrescente
+            // Reverse rows if descending
             if (!isAscending) {
                 sortedRows.reverse();
             }
 
-            // Atualiza o índice de organização atual
             currentSortIndex = columnIndex;
-
-            // Acrescenta linhas ordenadas ao "body" da tabela
             tbody.append(...sortedRows);
-
-            // Muda os icones
             updateSortIcons(columnIndex);
         }
 
@@ -145,16 +168,12 @@
             headers.forEach((header, index) => {
                 const icon = header.querySelector(".sort-icon");
                 if (icon) {
-                    if (index === columnIndex) {
-                        icon.textContent = isAscending ? "▲" : "▼";
-                    } else {
-                        icon.textContent = "";
-                    }
+                    icon.textContent = index === columnIndex ? (isAscending ? "▲" : "▼") : "";
                 }
             });
         }
 
-        // Função para fazer a busca por nome do produto
+        // Search function for filtering table by product name
         function filterTable() {
             const searchInput = document.getElementById("searchBar").value.toLowerCase();
             const table = document.getElementById("productTable");
@@ -162,11 +181,7 @@
 
             Array.from(rows).forEach(row => {
                 const productName = row.cells[0].textContent.toLowerCase();
-                if (productName.includes(searchInput)) {
-                    row.classList.remove("hidden");
-                } else {
-                    row.classList.add("hidden");
-                }
+                row.classList.toggle("hidden", !productName.includes(searchInput));
             });
         }
     </script>
