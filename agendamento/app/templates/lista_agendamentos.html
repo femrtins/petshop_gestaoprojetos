@@ -25,6 +25,8 @@
                     <strong>Horário:</strong> {{ agendamento.horario.strftime('%Y-%m-%d %H:%M') }}<br>
                     <strong>Atendente:</strong> {{ agendamento.colaborador.nome }}
                 </li>
+                <a href="edit-agendamento.html"><button>c</button></a>
+
             {% endfor %}
         </ul>
     {% else %}
