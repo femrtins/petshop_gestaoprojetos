@@ -1,13 +1,5 @@
 from config import *
 
-'''
-
-Não será mais utilizado JSON.
-    - Precisa ver de variavel de formulario;
-    - Retorna string direto tanto para erro quanto ok.
-
-'''
-
 if __name__ == "__main__":
 
     # Criando o banco de dados
@@ -15,34 +7,53 @@ if __name__ == "__main__":
 
     @app.route("/cadastrarCliente", methods=['POST'])
     def cadastroCliente():
-        dados = request.get_json()
-        resposta = jsonify({"resultado": "Cliente cadastrado", "detalhes": "ok"})
-        cliente = Cliente(**dados)
+
+        cliente = Cliente()
+
+        cliente.nome = request.form.get("nome")
+        cliente.email = request.form.get("email")
+        cliente.cpf = request.form.get("cpf")
+        cliente.endRua = request.form.get("rua")
+        cliente.endNumero = request.form.get("numero")
+        cliente.endComplemento = request.form.get("complemento")
+        cliente.senha = request.form.get("senha")
+        cliente.telefone = request.form.get("telefone")
+        
         try:
             # Verifica se o cliente já foi cadastrado
             # db.session... Retorna 'None' caso não encontre nada 
-            if  ((db.session.query(Cliente).filter(Cliente.email == dados["email"]).first() != None) or \
-                (db.session.query(Cliente).filter(Cliente.cpf == dados["cpf"]).first())!= None):
-                return jsonify({"resultado": "Erro", "detalhes": "Cliente com CPF ou email já cadastrado"})
+            if  ((db.session.query(Cliente).filter(Cliente.email == cliente.email).first() != None) or \
+                (db.session.query(Cliente).filter(Cliente.cpf == cliente.cpf).first())!= None):
+                return "Erro"
 
             db.session.add(cliente)
             db.session.commit()
             print("Colaborador incluido")
 
         except Exception as e:
-            
-            resposta = jsonify({"resultado": "erro", "detalhes": str(e)})
-            print("Colaborador rejeitado")
+            print(str(e))
+            return "Erro"
 
-        resposta.headers.add("Access-Control-Allow-Origin", "*")
-        return resposta
+        return "Sucesso"
     
 
     @app.route("/cadastrarColaborador", methods=['POST'])
     def cadastroCliente():
-        dados = request.get_json()
-        resposta = jsonify({"resultado": "Colaborador cadastrado", "detalhes": "ok"})
-        colaborador = Colaborador(**dados)
+        
+        colaborador = Colaborador()
+
+        colaborador.nome = request.form.get("nome")
+        colaborador.email = request.form.get("email")
+        colaborador.cpf = request.form.get("cpf")
+        colaborador.endRua = request.form.get("rua")
+        colaborador.endNumero = request.form.get("numero")
+        colaborador.endComplemento = request.form.get("complemento")
+        colaborador.senha = request.form.get("senha")
+        colaborador.telefone = request.form.get("telefone")
+        colaborador.cargo = request.form.get("cargo")
+        colaborador.salario = request.form.get("salario")
+        colaborador.status = request.form.get("status")
+        
         try:
 
             '''
@@ -53,27 +64,32 @@ if __name__ == "__main__":
 
             # Verifica se o colaborador já foi cadastrado
             # db.session... Retorna 'None' caso não encontre nada 
-            if  ((db.session.query(Colaborador).filter(Colaborador.email == dados["email"]).first()) or \
-                (db.session.query(Colaborador).filter(Colaborador.cpf == dados["cpf"]).first())) != None :
-                return jsonify({"resultado": "Erro", "detalhes": "Colaborador com CPF ou email já cadastrado"})
+            if  ((db.session.query(Colaborador).filter(Colaborador.email == colaborador.email).first()) or \
+                (db.session.query(Colaborador).filter(Colaborador.cpf == colaborador.cpf).first())) != None :
+                return "Erro"
 
             db.session.add(colaborador)
             db.session.commit()
+
             print("Colaborador incluido")
 
         except Exception as e:
-            
-            resposta = jsonify({"resultado": "erro", "detalhes": str(e)})
-            print("Colaborador rejeitado")
+            print(str(e))
+            return "Erro"
 
-        resposta.headers.add("Access-Control-Allow-Origin", "*")
-        return resposta
+        return "Sucesso"
 
     @app.route("/cadastrarAnimal", methods=['POST'])
     def cadastrarAnimal():
-        dados = request.get_json()
-        resposta = jsonify({"resultado": "Animal cadastrado", "detalhes": "ok"})
-        pet = Pet(**dados)
+
+        pet = Pet()
+
+        pet.clienteId = request.form.get("clienteId")
+        pet.nome = request.form.get("nome")
+        pet.especie = request.form.get("especia")
+        pet.raca = request.form.get("raca")
+        pet.anoNasc = request.form.get("anoNasc")
+
         try:
             
             db.session.add(pet)
@@ -81,33 +97,30 @@ if __name__ == "__main__":
             print("Animal incluido")
 
         except Exception as e:
-            resposta = jsonify({"resultado": "erro", "detalhes": str(e)})
-            print("Animal rejeitado")
+            print(str(e))
+            return "Erro"
 
-        resposta.headers.add("Access-Control-Allow-Origin", "*")
-        return resposta
+        return "Sucesso"
 
     @app.route("/login", methods=['POST'])
     def login():
-        dados = request.get_json()
-        resposta = jsonify({"resultado": "True", "detalhes": "ok"})
 
-        # Verificar se é cliente
-        if len(dados) == 10:
-            try:
-                cliente = db.session.query(Cliente).filter(Cliente.email == dados["email"]).first()
-                if cliente.senha == dados["senha"]:
-                    return resposta
-                else:
-                    return jsonify({"resultado": "True", "detalhes": "ok"})
-            except Exception as e:
-                return jsonify({"resultado": "False", "detalhes": "Email não cadastrado"})
-        else:
-            try:
-                colaborador = db.session.query(Colaborador).filter(Colaborador.email == dados["email"]).first()
-                if colaborador.senha == dados["senha"]:
-                    return resposta
-                else:
-                    return jsonify({"resultado": "True", "detalhes": "ok"})
-            except Exception as e:
-                return jsonify({"resultado": "False", "detalhes": "Email não cadastrado"})
+        email = request.form.get("email")
+        senha = request.form.get("senha")
+
+        cliente = db.session.query(Cliente).filter(Cliente.email == email).first()
+        if cliente != None:
+            if cliente.senha == senha:
+                return "True"
+            return "False"
+        colaborador = db.session.query(Colaborador).filter(Colaborador.email == email).first()
+        if colaborador != None:
+            if colaborador.senha == senha:
+                return "True"
+            return "False"
+        
+        return "Email não cadastrado"
+    
+    @app.route("/alterarDados", methods=['POST'])
+    def alterarDados():
+        pass
