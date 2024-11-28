@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from . import db
+from config import *
 
 class Cliente(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True) 
@@ -52,7 +52,7 @@ class Agendamento(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     colaboradorID = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)
     petID = db.Column(db.Integer, db.ForeignKey('pet.id'), nullable=False)
-    tipo = db.Column(db.Char, nullable=False)
+    tipo = db.Column(db.String(1), nullable=False)
     data = db.Column(db.Date, nullable=False)
     hora = db.Column(db.Time, nullable=False)
 
