@@ -1,4 +1,3 @@
-#from config import *
 from bd import *
 
 if __name__ == "__main__":
@@ -41,7 +40,7 @@ if __name__ == "__main__":
         
 
         @app.route("/cadastrarColaborador", methods=['POST'])
-        def cadastroCliente():
+        def cadastroColaborador():
             
             colaborador = Colaborador()
 
@@ -126,4 +125,17 @@ if __name__ == "__main__":
         
         @app.route("/alterarDados", methods=['POST'])
         def alterarDados():
-            pass
+
+            cliente = Cliente()
+
+            cliente.nome = request.form.get("nome")
+            cliente.endRua = request.form.get("rua")
+            cliente.endNumero = request.form.get("numero")
+            cliente.endComplemento = request.form.get("complemento")
+            cliente.senha = request.form.get("senha")
+            cliente.telefone = request.form.get("telefone")
+
+            if  ((db.session.query(Cliente).filter(Cliente.email == cliente.email).first() != None) or \
+                (db.session.query(Cliente).filter(Cliente.cpf == cliente.cpf).first())!= None):
+                return "Erro"
+            

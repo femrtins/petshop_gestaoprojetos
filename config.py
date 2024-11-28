@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
+from flask_login import UserMixin
 
 app = Flask(__name__)
 CORS(app)

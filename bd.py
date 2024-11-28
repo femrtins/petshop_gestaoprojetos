@@ -1,4 +1,3 @@
-from flask_login import UserMixin
 from config import *
 
 class Cliente(UserMixin, db.Model):
