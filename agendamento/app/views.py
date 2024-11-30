@@ -9,6 +9,7 @@ from datetime import timedelta, datetime
 ###
 
 
+
 # Rota para listar os agendamentos (home)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -65,68 +66,6 @@ def agendar():
     flash_errors(form)
     return render_template('agendar.html', form=form)
 
-@app.route('/del-agendamento', methods=['POST', 'GET'])
-def del_agendamento(id):
-    agendamento = Agendamento.query.get_or_404(id)
-    try:
-        db.session.delete(agendamento)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Ocorreu um erro ao excluir o agendamento: {str(e)}')
-    
-    return redirect(url_for('listar_agendamentos'))
-
-@app.route('/edit-agendamento/<int:id>', methods=['POST', 'GET'])
-def edit_agendamento(id):
-    form = AgendamentoForm()    
-    colaboradores = Colaborador.query.all()
-    form.colaborador.choices = [(colaborador.id, colaborador.nome) for colaborador in colaboradores]
-    agendamento = Agendamento.query.get_or_404(id)
-
-    if request.method == 'POST':
-
-        cliente = form.cliente.data
-        tipo_servico = form.tipo_servico.data            
-        data = form.data.data 
-        horario_str = form.horario.data 
-        colaborador = form.colaborador.data
-
-        if data < datetime.today().date():
-                flash("Não é possível agendar para datas passadas. Escolha uma data válida.", "danger")
-                return redirect(url_for('agendar'))
-
-        
-        # Atualiza as informações do usuário
-        if cliente:
-            agendamento.cliente = cliente
-        if tipo_servico:   
-            agendamento.tipo_servico = tipo_servico      
-        if data and horario:
-            try:
-                horario = datetime.combine(data, datetime.strptime(horario_str, '%H:%M').time())
-            except ValueError:
-                flash("Erro ao combinar data e hora. Tente novamente.", "danger")
-                return redirect(url_for('agendar'))  
-            
-            if Agendamento.query.filter((Agendamento.colaborador_id == colaborador) & (Agendamento.horario >= horario - timedelta(hours=1)) & 
-                                    (Agendamento.horario <= horario + timedelta(hours=1))).first():
-                flash("Esse horário já está ocupado para o atendente selecionado. Escolha outro horário ou outro atendente.", "danger")
-                return redirect(url_for('agendar'))            
-            agendamento.horario = horario              
-        if colaborador:
-            agendamento.colaborador = colaborador
-        
-        # Salva as alterações no banco de dados
-        try:
-            db.session.commit()
-            flash('Informações do perfil atualizadas com sucesso!')
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Ocorreu um erro ao atualizar o perfil: {str(e)}')
-    return redirect(url_for('listar_agendamentos'))
-
-
 #  para adicionar um colaborador
 
 @app.route('/add-colaborador', methods=['POST', 'GET'])
@@ -170,3 +109,125 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ))
+            
+####################################################################
+
+@app.route("/cadastrarCliente", methods=['POST'])
+def cadastroCliente():
+    form = ClienteForm()
+    cliente = Cliente()
+
+    cliente.nome = request.form.get("nome")
+    cliente.email = request.form.get("email")
+    cliente.cpf = request.form.get("cpf")
+    cliente.endRua = request.form.get("rua")
+    cliente.endNumero = request.form.get("numero")
+    cliente.endComplemento = request.form.get("complemento")
+    cliente.senha = request.form.get("senha")
+    cliente.telefone = request.form.get("telefone")
+    
+    try:
+        # Verifica se o cliente já foi cadastrado
+        # db.session... Retorna 'None' caso não encontre nada 
+        if  ((db.session.query(Cliente).filter(Cliente.email == cliente.email).first() != None) or \
+            (db.session.query(Cliente).filter(Cliente.cpf == cliente.cpf).first())!= None):
+            return "Erro"
+
+        db.session.add(cliente)
+        db.session.commit()
+        print("Colaborador incluido")
+
+    except Exception as e:
+        print(str(e))
+        return "Erro"
+
+    return "Sucesso"
+    
+
+@app.route("/cadastrarColaborador", methods=['POST'])
+def cadastroCliente():
+        
+    colaborador = Colaborador()
+
+    colaborador.nome = request.form.get("nome")
+    colaborador.email = request.form.get("email")
+    colaborador.cpf = request.form.get("cpf")
+    colaborador.endRua = request.form.get("rua")
+    colaborador.endNumero = request.form.get("numero")
+    colaborador.endComplemento = request.form.get("complemento")
+    colaborador.senha = request.form.get("senha")
+    colaborador.telefone = request.form.get("telefone")
+    colaborador.cargo = request.form.get("cargo")
+    colaborador.salario = request.form.get("salario")
+    colaborador.status = request.form.get("status")
+    
+    try:
+
+        '''
+        
+        Precisa verificar se o colaborador que está adicionando outro é o adminitrador root
+        
+        '''
+
+        # Verifica se o colaborador já foi cadastrado
+        # db.session... Retorna 'None' caso não encontre nada 
+        if  ((db.session.query(Colaborador).filter(Colaborador.email == colaborador.email).first()) or \
+            (db.session.query(Colaborador).filter(Colaborador.cpf == colaborador.cpf).first())) != None :
+            return "Erro"
+
+        db.session.add(colaborador)
+        db.session.commit()
+
+        print("Colaborador incluido")
+
+    except Exception as e:
+        print(str(e))
+        return "Erro"
+
+    return "Sucesso"
+
+@app.route("/cadastrarAnimal", methods=['POST'])
+def cadastrarAnimal():
+
+    pet = Pet()
+
+    pet.clienteId = request.form.get("clienteId")
+    pet.nome = request.form.get("nome")
+    pet.especie = request.form.get("especia")
+    pet.raca = request.form.get("raca")
+    pet.anoNasc = request.form.get("anoNasc")
+
+    try:
+        
+        db.session.add(pet)
+        db.session.commit()
+        print("Animal incluido")
+
+    except Exception as e:
+        print(str(e))
+        return "Erro"
+
+    return "Sucesso"
+
+@app.route("/login", methods=['POST'])
+def login():
+
+    email = request.form.get("email")
+    senha = request.form.get("senha")
+
+    cliente = db.session.query(Cliente).filter(Cliente.email == email).first()
+    if cliente != None:
+        if cliente.senha == senha:
+            return "True"
+        return "False"
+    colaborador = db.session.query(Colaborador).filter(Colaborador.email == email).first()
+    if colaborador != None:
+        if colaborador.senha == senha:
+            return "True"
+        return "False"
+    
+    return "Email não cadastrado"
+
+@app.route("/alterarDados", methods=['POST'])
+def alterarDados():
+    pass
