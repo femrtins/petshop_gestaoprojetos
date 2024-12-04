@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container">
+    <h1 class="page-header">Agendamento</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-danger">
+            <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('agendar') }}">
+        {{ form.csrf_token }}
+        <div class="form-group">{{ form.cliente.label }} {{ form.cliente(size=20, class="form-control") }}</div>
+        <div class="form-group">{{ form.tipo_servico.label }} {{ form.tipo_servico(class="form-control") }}</div>
+        <div class="form-group">{{ form.data.label }}{{ form.data(class="form-control", type="date", id="data_agendamento") }}</div>
+        <div class="form-group">{{ form.horario.label }}{{ form.horario(class="form-control") }}</div>
+        <div class="form-group">{{ form.colaborador.label }}{{ form.colaborador(class="form-control") }}</div>
+        <button type="submit" class="btn btn-primary">Enviar</button>  
+    </form>
+</div>
+<script>
+    window.onload = function() {
+        // Define a data mínima no campo de data para hoje
+        var dataHoje = new Date();
+        var dataMinima = dataHoje.toISOString().split('T')[0];
+        document.getElementById('data_agendamento').setAttribute('min', dataMinima);
+    };
+</script>
+{% endblock %}
