@@ -1,6 +1,6 @@
 from app.app import db
-from flask import UserMixin
-    
+from flask_login import UserMixin    
+
 class Agendamento(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
@@ -11,41 +11,17 @@ class Agendamento(db.Model):
     colaborador_id = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)
     colaborador = db.relationship('Colaborador', backref=db.backref('agendamentos', lazy=True))
 
-    def __repr__(self):
-        return f'<Agendamento {self.id}>'
-
-# class Colaborador(db.Model):
-#     __tablename__ = 'colaborador'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     nome = db.Column(db.String(100), nullable=False)
-#     email = db.Column(db.String(100), unique=True , nullable=False)
-#     cpf = db.Column(db.String(11), unique=True , nullable=False)
-#     endRua = db.Column(db.String(80), nullable=True)
-#     endNumero = db.Column(db.Integer, nullable=True)
-#     endComplemento = db.Column(db.String(20), nullable=True)
-#     senha = db.Column(db.String(100), nullable=False)    
-#     cargo = db.Column(db.String(50), nullable=False)
-#     salario = db.Column(db.Float, nullable=False)
-#     status = db.Column(db.Boolean, nullable=False)
-
-#     def __repr__(self):
-#         return f'<Atendente {self.nome}>'
-    
-class Pessoa(UserMixin, db.Model):
+class Cliente(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True , nullable=False)
+    celular = db.Column(db.String(11))
     cpf = db.Column(db.String(11), unique=True , nullable=False)
     endRua = db.Column(db.String(80), nullable=True)
     endNumero = db.Column(db.Integer, nullable=True)
     endComplemento = db.Column(db.String(20), nullable=True)
     senha = db.Column(db.String(100), nullable=False)    
-    telefone = db.Column(db.String(11), nullable=True)
-
-class Cliente(Pessoa):
-    # Verificar esta classe por causa desse atributo
-    temAnimal = db.Column(db.Boolean, nullable=False)
+    temAnimal = db.Column(db.Boolean, nullable=True)
       
 class Pet(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -55,7 +31,17 @@ class Pet(UserMixin, db.Model):
     raca = db.Column(db.String(50))
     anoNasc = db.Column(db.Integer)
 
-class Colaborador(Pessoa): 
+class Colaborador(UserMixin, db.Model): 
+    id = db.Column(db.Integer, primary_key=True) 
+    nome = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True , nullable=False)
+    celular = db.Column(db.String(11))
+    cpf = db.Column(db.String(11), unique=True , nullable=False)
+    endRua = db.Column(db.String(80), nullable=True)
+    endNumero = db.Column(db.Integer, nullable=True)
+    endComplemento = db.Column(db.String(20), nullable=True)
+    senha = db.Column(db.String(100), nullable=False)    
+    telefone = db.Column(db.String(11), nullable=True)
     cargo = db.Column(db.String(50), nullable=False)
     salario = db.Column(db.Float, nullable=False)
     status = db.Column(db.Boolean, nullable=False)

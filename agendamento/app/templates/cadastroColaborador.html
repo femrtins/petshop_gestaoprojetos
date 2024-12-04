@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container">
+  <h1 class="page-header">Adicionar Colaborador</h1>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-danger">
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
+  <form method="POST" action="{{ url_for('cadastroColaborador') }}">
+    {{ form.csrf_token }}
+    <div class="form-group">{{ form.nome.label }} {{ form.nome(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.email.label }} {{ form.email(size=20, class="form-control", type="email") }}</div>
+    <div class="form-group">{{ form.celular.label }} {{ form.celular(size=11, class="form-control", type="tel") }}</div>
+    <div class="form-group">{{ form.cpf.label }} {{ form.cpf(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.endRua.label }} {{ form.endRua(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.endNumero.label }} {{ form.endNumero(size=20, class="form-control")}}</div>
+    <div class="form-group">{{ form.endComplemento.label }} {{ form.endComplemento(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.senha.label }} {{ form.senha(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.confirmar_senha.label }} {{ form.confirmar_senha(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.cargo.label }} {{ form.cargo(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.salario.label }} {{ form.salario(size=20, class="form-control") }}</div>
+    <div class="form-group">{{ form.status.label }} {{ form.status(size=20, class="form-control") }}</div>
+    <button type="submit" class="btn btn-primary">Enviar</button>  
+</form>
+</div>
+{% endblock %}

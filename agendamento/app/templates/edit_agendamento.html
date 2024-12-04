@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container">
+    <h1 class="page-header">Editar Agendamento</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.cliente.label(class="form-label") }}
+            {{ form.cliente(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.tipo_servico.label(class="form-label") }}
+            {{ form.tipo_servico(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.data.label(class="form-label") }}
+            {{ form.data(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.horario.label(class="form-label") }}
+            {{ form.horario(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.colaborador.label(class="form-label") }}
+            {{ form.colaborador(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="{{ url_for('listar_agendamentos') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
