@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container">
+  <h1 class="page-header">Adicionar Cliente</h1>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-danger">
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
+  <form method="POST" action="/login" id="login">
+    <h2 id="titulo-login">Login</h2>    
+    <div id="dados">
+        <div class="input-box">
+            <label for="email"></label>
+            <input required placeholder="email" type="email" id="email" name="email" class="input-enviar" >
+        </div>
+        <div class="input-box">
+            <label for="senha"></label>
+            <input type="password" id="senha" name="senha" class="input-enviar" required placeholder="senha" >
+        </div>
+    </div>
+    
+    <div class="botao-enviar-div">
+        <button  type="submit" class="botao-enviar">Entrar</button>
+    </div>
+</form>
+</div>
+{% endblock %}
