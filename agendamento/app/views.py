@@ -3,11 +3,10 @@ from flask import render_template, request, redirect, url_for, flash, session
 from app.forms import AgendamentoForm, ColaboradorForm, ClienteForm, PetForm
 from app.models import Agendamento, Colaborador, Cliente, Pet
 from datetime import timedelta, datetime
-
+from flask_login import UserMixin, login_required, current_user, logout_user, login_user
 ###
 # Rotas da aplicação
 ###
-
 
 # Rota para listar os agendamentos (home)
 
@@ -26,6 +25,7 @@ def listar_agendamentos():
 # Rota para agendar um serviço
 
 @app.route('/agendar', methods=['GET', 'POST'])
+@login_required
 def agendar():
     form = AgendamentoForm()
     
@@ -35,7 +35,7 @@ def agendar():
     if request.method == 'POST':
         if form.validate_on_submit():
             
-            cliente = form.cliente.data
+            cliente_id = current_user.id
             tipo_servico = form.tipo_servico.data            
             data = form.data.data 
             horario_str = form.horario.data 
@@ -44,7 +44,6 @@ def agendar():
             if data < datetime.today().date():
                 flash("Não é possível agendar para datas passadas. Escolha uma data válida.", "danger")
                 return redirect(url_for('agendar'))
-
             try:
                 horario = datetime.combine(data, datetime.strptime(horario_str, '%H:%M').time())
             except ValueError:
@@ -54,8 +53,9 @@ def agendar():
             if Agendamento.query.filter((Agendamento.colaborador_id == colaborador) & (Agendamento.horario == horario)).first():
                 flash("Esse horário já está ocupado para o atendente selecionado. Escolha outro horário ou outro atendente.", "danger")
                 return redirect(url_for('agendar'))
+
             
-            novo_agendamento = Agendamento(cliente=cliente,tipo_servico=tipo_servico, horario=horario, colaborador_id = colaborador)
+            novo_agendamento = Agendamento(tipo_servico=tipo_servico, horario=horario,cliente_id=cliente_id, colaborador_id = colaborador)
             db.session.add(novo_agendamento)
             db.session.commit()
             flash("Agendamento realizado com sucesso!", "success")
@@ -244,7 +244,37 @@ def cadastroCliente():
     flash_errors(form)
     return render_template('cadastroCliente.html', form=form)
 
+
+@app.route("/cadastrarAnimal", methods=['POST', 'GET'])
+@login_required
+def cadastroPet():
+    form = PetForm()
+    
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            pet = Pet()
+            pet.clienteId = current_user.id
+            pet.nome = form.nome.data 
+            pet.especie = form.especie.data 
+            pet.raca = form.raca.data 
+            pet.anoNasc = form.anoNasc.data 
+
+        try:
+            db.session.add(pet)
+            db.session.commit()
+            print("Animal incluido")
+
+        except Exception as e:
+            print(str(e))
+            return "Erro"
+
+        return redirect(url_for('listar_agendamentos'))
+
+    flash_errors(form)
+    return render_template('cadastroPet.html', form=form)
+
 @app.route("/alterarDadosColaborador/<int:id>", methods=['POST', 'GET'])
+@login_required
 def alterarDadosColaborador(id):
     # Verifica se a rota está sendo acessada
     form = ColaboradorForm(is_editing=True)
@@ -300,6 +330,7 @@ def alterarDadosColaborador(id):
     return render_template('alterarDadosColaborador.html', form=form)
 
 @app.route("/alterarDadosCliente/<int:id>", methods=['POST', 'GET'])
+@login_required
 def alterarDadosCliente(id):
     # Verifica se a rota está sendo acessada
     form = ClienteForm(is_editing=True)
@@ -347,3 +378,31 @@ def alterarDadosCliente(id):
     form.confirmar_senha.data = ''
 
     return render_template('alterarDadosCliente.html', form=form)
+
+@app.route("/login", methods=['POST', 'GET'])
+def login():
+
+    if request.method == 'POST':
+        email = request.form.get("email")
+        senha = request.form.get("senha")
+
+        cliente = db.session.query(Cliente).filter(Cliente.email == email).first()
+        if cliente != None:
+            if cliente.senha == senha:
+                login_user(cliente)
+                return redirect(url_for('alterarDadosCliente', id=cliente.id))
+            return redirect(url_for('login'))
+        colaborador = db.session.query(Colaborador).filter(Colaborador.email == email).first()
+        if colaborador != None:
+            if colaborador.senha == senha:
+                login_user(colaborador)
+                return redirect(url_for('alterarDadosColaborador', id=colaborador.id))
+            return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+@app.route('/deslogar')
+@login_required
+def deslogar():
+    logout_user()
+    return render_template('login.html')

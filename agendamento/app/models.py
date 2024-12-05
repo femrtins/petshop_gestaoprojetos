@@ -4,12 +4,15 @@ from flask_login import UserMixin
 class Agendamento(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
-    cliente = db.Column(db.String(100), nullable=False)
     tipo_servico = db.Column(db.String(50), nullable=False)
     horario = db.Column(db.DateTime, nullable=False)
+    cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
     
     colaborador_id = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)
     colaborador = db.relationship('Colaborador', backref=db.backref('agendamentos', lazy=True))
+
+
+
 
 class Cliente(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True) 

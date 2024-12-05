@@ -94,4 +94,3 @@ class PetForm(FlaskForm):
     especie = StringField('Espécie', validators=[DataRequired(), Length(max=50)])
     raca = StringField('Raça', validators=[DataRequired(), Length(max=50)])
     anoNasc = IntegerField("Ano de Nascimento",validators=[NumberRange(min=1900, max=ano_atual,)])
-    cliente_id = SelectField('Cliente', coerce=int)
