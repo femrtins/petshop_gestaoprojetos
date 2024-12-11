@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #searchBar {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .add-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .add-button:hover {
+            background-color: #218838;
+        }
+
+        .add-icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        table {
+            width: 90%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        th {
+            background-color: #ffff80;
+            color: #000;
+            position: relative;
+        }
+
+        .sort-icon {
+            font-size: 0.8em;
+            margin-left: 8px;
+            position: absolute;
+            right: 10px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Estoque</h1>
+
+    <!-- Add Item Button -->
+    <a href="/stock_add" class="add-button">
+        <span class="add-icon">➕</span>
+        Adicionar Item
+    </a>
+
+    <!-- Search Bar -->
+    <input type="text" id="searchBar" placeholder="Procurar por nome..." onkeyup="filterTable()">
+
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Nome<span class="sort-icon"></span></th>
+                <th onclick="sortTable(1)">Quantidade Disponível<span class="sort-icon"></span></th>
+                <th onclick="sortTable(2)">Preço<span class="sort-icon"></span></th>
+                <th onclick="sortTable(3)">Categoria<span class="sort-icon"></span></th>
+                <th onclick="sortTable(4)">Descrição<span class="sort-icon"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr>
+                    <td><a href="{{ url_for('editar_item', item_id=row['id']) }}">{{ row["nome"] }}</a></td>
+                    <td>{{ row["qnt"] }}</td>
+                    <td>{{ row["preco_custo"] }}</td>
+                    <td>{{ row["categoria"] }}</td>
+                    <td>{{ row["descricao"] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        let currentSortIndex = -1;
+        let isAscending = true;
+
+        function sortTable(columnIndex) {
+            const table = document.getElementById("productTable");
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.rows);
+
+            const isNumeric = !isNaN(rows[0].cells[columnIndex].textContent.trim());
+            let sortedRows;
+
+            // Sort rows based on column content
+            if (isNumeric) {
+                sortedRows = rows.sort((a, b) => {
+                    return parseFloat(a.cells[columnIndex].textContent) - parseFloat(b.cells[columnIndex].textContent);
+                });
+            } else {
+                sortedRows = rows.sort((a, b) => {
+                    return a.cells[columnIndex].textContent.localeCompare(b.cells[columnIndex].textContent);
+                });
+            }
+
+            // Toggle sort order if clicking the same column
+            if (currentSortIndex === columnIndex) {
+                isAscending = !isAscending;
+            } else {
+                isAscending = true;
+            }
+
+            // Reverse rows if descending
+            if (!isAscending) {
+                sortedRows.reverse();
+            }
+
+            currentSortIndex = columnIndex;
+            tbody.append(...sortedRows);
+            updateSortIcons(columnIndex);
+        }
+
+        function updateSortIcons(columnIndex) {
+            const headers = document.querySelectorAll("th");
+            headers.forEach((header, index) => {
+                const icon = header.querySelector(".sort-icon");
+                if (icon) {
+                    icon.textContent = index === columnIndex ? (isAscending ? "▲" : "▼") : "";
+                }
+            });
+        }
+
+        // Search function for filtering table by product name
+        function filterTable() {
+            const searchInput = document.getElementById("searchBar").value.toLowerCase();
+            const table = document.getElementById("productTable");
+            const rows = table.tBodies[0].rows;
+
+            Array.from(rows).forEach(row => {
+                const productName = row.cells[0].textContent.toLowerCase();
+                row.classList.toggle("hidden", !productName.includes(searchInput));
+            });
+        }
+    </script>
+</body>
+</html>

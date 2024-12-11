@@ -23,7 +23,13 @@
                     <strong>Cliente:</strong> {{ agendamento.cliente }}<br>
                     <strong>Tipo de Serviço:</strong> {{ agendamento.tipo_servico }}<br>
                     <strong>Horário:</strong> {{ agendamento.horario.strftime('%Y-%m-%d %H:%M') }}<br>
-                    <strong>Atendente:</strong> {{ agendamento.colaborador.nome }}
+                    <strong>Atendente:</strong> {{ agendamento.colaborador.nome }}<br>
+                    <a href="{{ url_for('edit_agendamento', id=agendamento.id) }}" class="btn btn-warning btn-sm">
+                        Editar
+                    </a>
+                    <form action="{{ url_for('del_agendamento', id=agendamento.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>
