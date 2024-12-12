@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, FloatField, BooleanField, PasswordField, SelectField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange, Optional, Regexp
 from datetime import datetime
+from flask_login import current_user
+from .models import Cliente 
 
 ano_atual = datetime.now().year
 
@@ -60,7 +62,55 @@ class ColaboradorForm(FlaskForm):
     status = BooleanField('Status (Ativo/Inativo)')
 
 class AgendamentoForm(FlaskForm):
-    cliente = StringField('Nome do Cliente', validators=[DataRequired(), Length(min=2, max=100)])
+    def __init__(self, *args, **kwargs):
+        super(AgendamentoForm, self).__init__(*args, **kwargs)
+
+        if current_user.is_authenticated:
+            if current_user.role == 'cliente':
+                # Se for cliente, cria o campo cliente e define o valor como o próprio ID do usuário
+                self.cliente.choices = (current_user.id, current_user.nome)
+                self.cliente.data = current_user.id
+                
+            elif current_user.role == 'colaborador':
+                print("oi")
+                # Se for colaborador, popula as opções com clientes
+                self.cliente.choices = [(cliente.id, cliente.nome) for cliente in Cliente.query.all()]
+                
+    cliente = SelectField('Cliente', coerce=int, validators=[DataRequired()])
+            
+    tipo_servico = SelectField('Tipo de Serviço', choices=[
+        ('Consulta', 'Consulta'),
+        ('Vacinação', 'Vacinação'),
+        ('Exame Laboratorial', 'Exame Laboratorial'),
+        ('Tosa', 'Tosa'),
+        ('Banho', 'Banho')
+    ], validators=[DataRequired()])
+
+    data = DateField('Data do Agendamento', 
+                     format='%Y-%m-%d', 
+                     validators=[DataRequired()],
+                     default=datetime.today)  
+    
+    horario = SelectField('Hora do Agendamento', 
+                          choices=[
+                              ('08:00', '08:00'),
+                              ('09:00', '09:00'),
+                              ('10:00', '10:00'),
+                              ('11:00', '11:00'),
+                              ('12:00', '12:00'),
+                              ('13:00', '13:00'),
+                              ('14:00', '14:00'),
+                              ('15:00', '15:00'),
+                              ('16:00', '16:00'),
+                              ('17:00', '17:00')
+                          ], validators=[DataRequired()])
+    colaborador = SelectField('Atendente', coerce=int, validators=[DataRequired()])
+    
+class AgendamentoEditForm(FlaskForm):
+  
+                
+    cliente = StringField('Nome', validators=[DataRequired(), Length(max=100)])
+            
     tipo_servico = SelectField('Tipo de Serviço', choices=[
         ('Consulta', 'Consulta'),
         ('Vacinação', 'Vacinação'),

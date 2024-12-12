@@ -1,26 +1,74 @@
 from app.app import app, db
-from flask import render_template, request, redirect, url_for, flash, session
-from app.forms import AgendamentoForm, ColaboradorForm, ClienteForm, PetForm
-from app.models import Agendamento, Colaborador, Cliente, Pet
-from datetime import timedelta, datetime
-from flask_login import UserMixin, login_required, current_user, logout_user, login_user
+from flask import render_template, request, redirect, url_for, flash, abort, jsonify
+from app.forms import AgendamentoForm, ColaboradorForm, ClienteForm, PetForm, AgendamentoEditForm
+from app.models import Agendamento, Colaborador, Cliente, Pet, Estoque
+from datetime import datetime
+from flask_login import login_required, current_user, logout_user, login_user
+from functools import wraps
+
 ###
 # Rotas da aplicação
 ###
 
-# Rota para listar os agendamentos (home)
+def admin_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Verifica se o usuário é um Colaborador ou se tem o e-mail de admin
+        if current_user.email != "admin@example.com":
+            abort(403)  
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def colaborador_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Verifica se o usuário atual tem o papel de 'colaborador'
+        if getattr(current_user, 'role', None) != 'colaborador':
+            abort(403)  # Acesso proibido
+        return func(*args, **kwargs)
+    return wrapper
+
+# Rota para listar os agendamentos
 
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def listar_agendamentos():
+    # Obtém os parâmetros de filtro
     colaborador_id = request.args.get('colaborador_id', type=int)
-    colaboradores = Colaborador.query.all()
+    data_inicial = request.args.get('data_inicial')
+    data_final = request.args.get('data_final')
+    
+    # Filtra agendamentos com base no papel do usuário
+    query = Agendamento.query
+    
+    if current_user.role == 'cliente':
+        query = query.filter(Agendamento.cliente_id == current_user.id)
+    elif current_user.role == 'colaborador':
+        if colaborador_id:
+            query = query.filter(Agendamento.colaborador_id == colaborador_id)
+    
+    # Aplica os filtros de data
+    if data_inicial:
+        query = query.filter(Agendamento.horario >= datetime.strptime(data_inicial, '%Y-%m-%d'))
+    if data_final:
+        query = query.filter(Agendamento.horario <= datetime.strptime(data_final, '%Y-%m-%d'))
+    
+    # Ordena por horário crescente e executa a consulta
+    agendamentos = query.order_by(Agendamento.horario).all()
 
-    if colaborador_id:
-        agendamentos = Agendamento.query.filter_by(colaborador_id=colaborador_id).all()
-    else:
-        agendamentos = Agendamento.query.all()
+    # Para colaboradores, carrega a lista de colaboradores
+    colaboradores = Colaborador.query.all() if current_user.role == 'colaborador' else []
 
-    return render_template('lista_agendamentos.html', agendamentos=agendamentos, colaboradores=colaboradores, colaborador_id=colaborador_id)
+    return render_template(
+        'lista_agendamentos.html', 
+        agendamentos=agendamentos, 
+        colaboradores=colaboradores, 
+        colaborador_id=colaborador_id,
+        data_inicial=data_inicial,
+        data_final=data_final
+    )
+
 
 # Rota para agendar um serviço
 
@@ -28,18 +76,22 @@ def listar_agendamentos():
 @login_required
 def agendar():
     form = AgendamentoForm()
-    
+
     colaboradores = Colaborador.query.all()
     form.colaborador.choices = [(colaborador.id, colaborador.nome) for colaborador in colaboradores]
     
     if request.method == 'POST':
         if form.validate_on_submit():
             
-            cliente_id = current_user.id
             tipo_servico = form.tipo_servico.data            
             data = form.data.data 
             horario_str = form.horario.data 
             colaborador = form.colaborador.data
+            
+            if current_user.role == 'cliente':
+                cliente_id = current_user.id
+            else:
+                cliente_id = form.cliente.data  
 
             if data < datetime.today().date():
                 flash("Não é possível agendar para datas passadas. Escolha uma data válida.", "danger")
@@ -58,7 +110,6 @@ def agendar():
             novo_agendamento = Agendamento(tipo_servico=tipo_servico, horario=horario,cliente_id=cliente_id, colaborador_id = colaborador)
             db.session.add(novo_agendamento)
             db.session.commit()
-            flash("Agendamento realizado com sucesso!", "success")
             return redirect(url_for('listar_agendamentos'))
         
     flash_errors(form)
@@ -78,18 +129,26 @@ def del_agendamento(id):
 
 @app.route('/edit-agendamento/<int:id>', methods=['GET', 'POST'])
 def edit_agendamento(id):
-    form = AgendamentoForm()
+    form = AgendamentoEditForm()
     colaboradores = Colaborador.query.all()
     form.colaborador.choices = [(colaborador.id, colaborador.nome) for colaborador in colaboradores]
     agendamento = Agendamento.query.get_or_404(id)
+    if current_user.role == 'colaborador':
+        form.cliente.render_kw = {'readonly': True}
+    
 
-    if request.method == 'POST' and form.validate_on_submit():
-        # Dados do formulário
-        cliente = form.cliente.data
+    if request.method == 'POST':
         tipo_servico = form.tipo_servico.data
         data = form.data.data
         horario_str = form.horario.data
         colaborador = form.colaborador.data
+
+
+        if current_user.role == 'cliente':
+            cliente_id = current_user.id
+        else:
+            cliente_id = form.cliente.data  
+            print(cliente_id) 
 
         # Validação de data
         if data < datetime.today().date():
@@ -109,7 +168,7 @@ def edit_agendamento(id):
             return redirect(url_for('edit_agendamento', id=id))
 
         # Atualização dos campos
-        agendamento.cliente = cliente
+        agendamento.cliente_id = cliente_id
         agendamento.tipo_servico = tipo_servico
         agendamento.horario = horario
         agendamento.colaborador_id = colaborador
@@ -123,8 +182,7 @@ def edit_agendamento(id):
             db.session.rollback()
             flash(f"Ocorreu um erro ao salvar as alterações: {str(e)}", "danger")
 
-    # Preenche o formulário com os dados atuais do agendamento
-    form.cliente.data = agendamento.cliente
+    form.cliente.data = agendamento.cliente_id
     form.tipo_servico.data = agendamento.tipo_servico
     form.data.data = agendamento.horario.date()
     form.horario.data = agendamento.horario.strftime('%H:%M')
@@ -135,7 +193,11 @@ def edit_agendamento(id):
 #  para adicionar um colaborador
 
 @app.route('/cadastrarColaborador', methods=['POST', 'GET'])
+@login_required
+@admin_required
 def cadastroColaborador():
+    print(current_user)
+
     form = ColaboradorForm()
 
     if request.method == 'POST':
@@ -183,7 +245,7 @@ def cadastroColaborador():
                 print(str(e))
                 return "Erro"
 
-            return redirect(url_for('listar_agendamentos'))
+            return redirect(url_for('index'))
 
     flash_errors(form)
     return render_template('cadastroColaborador.html', form=form)
@@ -239,7 +301,7 @@ def cadastroCliente():
                 print(str(e))
                 return "Erro"
             
-            return redirect(url_for('listar_agendamentos'))
+            return redirect(url_for('index'))
 
     flash_errors(form)
     return render_template('cadastroCliente.html', form=form)
@@ -268,13 +330,14 @@ def cadastroPet():
             print(str(e))
             return "Erro"
 
-        return redirect(url_for('listar_agendamentos'))
+        return redirect(url_for('index'))
 
     flash_errors(form)
     return render_template('cadastroPet.html', form=form)
 
 @app.route("/alterarDadosColaborador/<int:id>", methods=['POST', 'GET'])
 @login_required
+@colaborador_required
 def alterarDadosColaborador(id):
     # Verifica se a rota está sendo acessada
     form = ColaboradorForm(is_editing=True)
@@ -307,7 +370,7 @@ def alterarDadosColaborador(id):
             try:
                 db.session.commit()
                 flash("Colaborador atualizado com sucesso!", "success")
-                return redirect(url_for('listar_agendamentos'))
+                return redirect(url_for('index'))
             except Exception as e:
                 db.session.rollback()
                 flash(f"Ocorreu um erro ao salvar as alterações: {str(e)}", "danger")
@@ -359,7 +422,7 @@ def alterarDadosCliente(id):
             try:
                 db.session.commit()
                 flash("Cliente atualizado com sucesso!", "success")
-                return redirect(url_for('listar_agendamentos'))
+                return redirect(url_for('index'))
             except Exception as e:
                 db.session.rollback()
                 flash(f"Ocorreu um erro ao salvar as alterações: {str(e)}", "danger")
@@ -381,23 +444,24 @@ def alterarDadosCliente(id):
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
-
     if request.method == 'POST':
         email = request.form.get("email")
         senha = request.form.get("senha")
 
         cliente = db.session.query(Cliente).filter(Cliente.email == email).first()
-        if cliente != None:
+        if cliente:
             if cliente.senha == senha:
                 login_user(cliente)
-                return redirect(url_for('alterarDadosCliente', id=cliente.id))
-            return redirect(url_for('login'))
-        colaborador = db.session.query(Colaborador).filter(Colaborador.email == email).first()
-        if colaborador != None:
-            if colaborador.senha == senha:
-                login_user(colaborador)
-                return redirect(url_for('alterarDadosColaborador', id=colaborador.id))
-            return redirect(url_for('login'))
+                return redirect(url_for('index'))
+
+        else:
+            colaborador = db.session.query(Colaborador).filter(Colaborador.email == email).first()
+            if colaborador:
+                if colaborador.senha == senha:
+                    login_user(colaborador)
+                    return redirect(url_for('index'))
+            else:
+                flash("Email não encontrado.", "danger")
 
     return render_template('login.html')
 
@@ -405,4 +469,115 @@ def login():
 @login_required
 def deslogar():
     logout_user()
-    return render_template('login.html')
+    return render_template('index.html')
+
+##########################################################
+
+
+@app.route("/index")
+def index():
+    return render_template('index.html')
+
+@app.route("/stock_add")
+@login_required
+@colaborador_required
+def stock_add_page():    
+    return render_template('stock_add.html')
+
+@app.route("/submit-stock", methods=['POST'])
+@login_required
+@colaborador_required
+def submit_stock():
+    
+    #   Recuperando os dados do formulario
+    name = request.form.get('item-name')
+    quantity = request.form.get('quantity')
+    price = request.form.get('price')
+    category = request.form.get('category')
+    description = request.form.get('description')
+
+    #   O BD não pode receber nada com " ou ' porque quebraria o query
+    name = name.replace("'", "")
+    name = name.replace('"', "")
+
+    description = description.replace("'", "")
+    description = description.replace('"', "")
+
+    item = Estoque(nome=name, qnt=quantity, preco_custo=price, categoria=category, descricao=description)
+    
+    try:
+        db.session.add(item)
+        db.session.commit()
+
+    except Exception as e:
+        print(str(e))
+        return "Erro"
+
+    return redirect("/stock")
+
+@app.route("/stock")
+@login_required
+@colaborador_required
+def stock_view():
+    estoque = Estoque.query.all()
+
+    return render_template("stock.html", data=estoque)
+
+@app.route("/edit_stock/<int:item_id>", methods=['GET', 'POST'])
+@login_required
+@colaborador_required
+def editar_item(item_id):
+    item = Estoque.query.get_or_404(item_id)
+
+    if request.method == 'POST':
+        # Recuperar os dados do formulário
+        name = request.form.get('item-name')
+        quantity = request.form.get('quantity')
+        price = request.form.get('price')
+        category = request.form.get('category')
+        description = request.form.get('description')
+
+        # Sanitizar os dados para evitar problemas com aspas
+        if name:
+            name = name.replace("'", "").replace('"', "")
+        if description:
+            description = description.replace("'", "").replace('"', "")
+
+        # Atualizar os campos do item
+        item.nome = name or item.nome
+        item.qnt = quantity or item.qnt
+        item.preco_custo = price or item.preco_custo
+        item.categoria = category or item.categoria
+        item.descricao = description or item.descricao
+
+        try:
+            # Salvar as alterações no banco de dados
+            db.session.commit()
+            return redirect("/stock")
+        except Exception as e:
+            print(str(e))
+            return "Erro ao editar o item do estoque."
+
+    # Renderizar o formulário de edição com os dados do item
+    return render_template('edit_stock.html', item_data=item)
+
+
+
+@app.route('/delete-item/<int:item_id>', methods=['GET'])
+@login_required
+@colaborador_required
+def delete_stock(item_id):
+    estoque = Estoque.query.get_or_404(item_id)
+    try:
+        db.session.delete(estoque)
+        db.session.commit()
+        flash("Item excluído com sucesso!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Ocorreu um erro ao excluir o item: {str(e)}", "danger")
+
+    return redirect('/stock')
+
+
+# ##################################################################
+

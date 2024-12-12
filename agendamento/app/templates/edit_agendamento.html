@@ -5,10 +5,12 @@
     <h1 class="page-header">Editar Agendamento</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
+        {% if current_user.role == 'colaborador' %}
         <div class="form-group">
             {{ form.cliente.label(class="form-label") }}
             {{ form.cliente(class="form-control") }}
         </div>
+        {%endif%}
         <div class="form-group">
             {{ form.tipo_servico.label(class="form-label") }}
             {{ form.tipo_servico(class="form-control") }}

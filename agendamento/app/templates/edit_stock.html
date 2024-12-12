@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Item</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            width: 400px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .update-btn {
+            background-color: #28a745;
+        }
+        .update-btn:hover {
+            background-color: #218838;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Editar Item</h2>
+        <form id="edit-stock-form" action="{{ url_for('editar_item', item_id=item_data['id']) }}" method="POST">
+            <input type="hidden" name="item-id" value="{{ item_data['id'] }}">
+            <div class="form-group">
+                <label for="item-name">Nome do Item:</label>
+                <input type="text" id="item-name" name="item-name" value="{{ item_data['nome'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantidade:</label>
+                <input type="number" id="quantity" name="quantity" min="0" value="{{ item_data['qnt'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Preço (por unidade):</label>
+                <input type="number" id="price" name="price" step="0.01" value="{{ item_data['preco_custo'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="category">Categoria:</label>
+                <select id="category" name="category">
+                    <option value="vacinas" {% if item_data['categoria'] == 'vacinas' %}selected{% endif %}>Vacinas</option>
+                    <option value="medicamentos" {% if item_data['categoria'] == 'medicamentos' %}selected{% endif %}>Medicamentos</option>
+                    <option value="racao" {% if item_data['categoria'] == 'racao' %}selected{% endif %}>Ração</option>
+                    <option value="brinquedos" {% if item_data['categoria'] == 'brinquedos' %}selected{% endif %}>Brinquedos</option>
+                    <option value="cosmeticos" {% if item_data['categoria'] == 'cosmeticos' %}selected{% endif %}>Cosméticos e Higiene</option>
+                    <option value="acessorios" {% if item_data['categoria'] == 'acessorios' %}selected{% endif %}>Acessórios</option>
+                    <option value="outros" {% if item_data['categoria'] == 'outros' %}selected{% endif %}>Outros</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Descrição:</label>
+                <textarea id="description" name="description" rows="4">{{ item_data['descricao'] }}</textarea>
+            </div>
+            <div class="button-group">
+                <button type="submit" class="update-btn">Atualizar Item</button>
+                <button type="button" class="delete-btn" onclick="confirmDelete()">Excluir Item</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function confirmDelete() {
+            const confirmAction = confirm("Você tem certeza que deseja excluir este item? (Isso excluira todas as entradas desse item no estoque)");
+            if (confirmAction) {
+                const itemId = document.querySelector('input[name="item-id"]').value;
+                window.location.href = `/delete-item/${itemId}`;
+            }
+        }
+    </script>
+
+</body>
+</html>

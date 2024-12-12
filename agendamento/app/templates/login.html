@@ -2,7 +2,7 @@
 
 {% block main %}
 <div class="container">
-  <h1 class="page-header">Adicionar Cliente</h1>
+  <h1 class="page-header">Login</h1>
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       <div class="alert alert-danger">
@@ -14,8 +14,7 @@
       </div>
     {% endif %}
   {% endwith %}
-  <form method="POST" action="/login" id="login">
-    <h2 id="titulo-login">Login</h2>    
+  <form method="POST" action="/login" id="login"> 
     <div id="dados">
         <div class="input-box">
             <label for="email"></label>
