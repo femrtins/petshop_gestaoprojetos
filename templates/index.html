@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/index.css">
+    <link rel="icon" type="image/jpg" href="../static/midias/logo-site.jpg" />
+
+    <title>
+        Petshop - Raio de Sol
+    </title>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-1">
+                <a href="/">
+                    <img class="logo" src="../static/midias/Logo3.png" alt="Logo do Petshop Raio de Sol">
+                </a>
+            </div>
+            <div class="nav-2">
+                <button class="nav-btn nav-btn-1" onclick="openModal()">
+                    Entrar
+                </button>
+                <a href="/Cadastro">
+                    <button class="nav-btn nav-btn-2">
+                        Cadastrar
+                    </button>
+                </a>
+                <a href="/Pets">
+                    <button class="nav-btn nav-btn-3">
+                        Pets
+                    </button>
+                </a>
+                <a href="./estoque.html">
+                    <button class="nav-btn nav-btn-4">
+                        Estoque
+                    </button>
+                </a>
+                <a href="/Perfil">
+                    <button class="nav-btn nav-btn-5">
+                        Perfil
+                    </button>
+                </a>
+            </div>
+        </nav>
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <button class="close-button" onclick="closeModal()">x</button>
+                <h2>Login</h2>
+                <form action="/login" method="POST" class="form-login">
+                    <div class="opcoes-radio">
+                        <label>
+                            <input type="radio" name="radio" value="funcionario" class="radio">
+                            Funcionário
+                        </label>
+                        <label>
+                            <input type="radio" name="user-type" value="cliente" class="radio">
+                            Cliente
+                        </label>
+                    </div>
+                    <input type="email" placeholder="E-mail" class="email-login" id="email" name="email">
+                    <input type="password" placeholder="Senha" class="password-login" id="senha" name="senha">
+                    <button type="submit">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="main-1">
+            <h2 class="bem-vindo">
+                Bem-vindo ao Raio de Sol!
+            </h2>
+            <h2 class="apresentacao">
+                Cuidado e o bem-estar dos seus pets estão sempre em primeiro lugar! Nosso pet shop oferece um ambiente acolhedor e profissionais dedicados para atender às necessidades do seu amigo de estimação. Disponibilizamos serviços de banho e tosa, consultas veterinárias,
+                exames especializados e vacinações, tudo com atenção e carinho que eles merecem.
+                <br>
+                <br> Agende um horário e descubra como nossa equipe pode ajudar seu pet a ter uma vida saudável e feliz. Cuidar do seu pet é a nossa vocação, no Raio de Sol, ele encontra amor, segurança e qualidade em cada detalhe.
+            </h2>
+            <a href="/Agendar">
+                <button class="agendar">
+                    Agendar um horário
+                </button>
+            </a>
+        </div>
+        <div class="ondas">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="svg-1">
+                <path fill="#ffff66" fill-opacity="1" d="M0,288L48,288C96,288,192,288,288,266.7C384,245,480,203,576,186.7C672,171,768,181,864,208C960,235,1056,277,1152,266.7C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+              </svg>
+        </div>
+        <div class="main-2">
+            <h2 class="titulo-main-2">Aqui estão alguns de nossos clientes:</h2>
+            <div class="div-banho div-main-2">
+                <img class="banho img-main-2" src="../static/midias/banho-1.png" alt="Cachorro tomando banho">
+                <img class="banho img-main-2" src="../static/midias/banho-2.JPG" alt="Gato tomando banho">
+                <img class="banho img-main-2" src="../static/midias/banho-3.jpg" alt="Cachorro tomando banho">
+            </div>
+            <div class="div-tosa div-main-2">
+                <img class="tosa img-main-2" src="../static/midias/tosa-1.jpg" alt="Cachorro sendo tosado">
+                <img class="tosa img-main-2" src="../static/midias/tosa-2.jpg" alt="Gato sendo tosado">
+                <img class="tosa img-main-2" src="../static/midias/tosa-3.JPG" alt="Cachorro sendo tosado">
+            </div>
+            <div class="div-consulta div-main-2">
+                <img class="consulta img-main-2" src="../static/midias/consulta-1.jpg" alt="Cachorro em consulta">
+                <img class="consulta img-main-2" src="../static/midias/consulta-2.png" alt="Gato em consulta">
+                <img class="consulta img-main-2" src="../static/midias/consulta-3.jpeg" alt="Cachorro em consulta">
+            </div>
+            <div class="div-exame div-main-2">
+                <img class="exame img-main-2" src="../static/midias/exame-1.jpg" alt="Cachorro fazendo exame">
+                <img class="exame img-main-2" src="../static/midias/exame-2.jpg" alt="Gato fazendo exame">
+                <img class="exame img-main-2" src="../static/midias/exame-3.png" alt="Cachorro fazendo exame">
+            </div>
+            <div class="div-vacina div-main-2">
+                <img class="vacina img-main-2" src="../static/midias/vacina-1.jpg" alt="Cachorro tomando vacina">
+                <img class="vacina img-main-2" src="../static/midias/vacina-2.jpg" alt="Gato tomando vacina">
+                <img class="vacina img-main-2" src="../static/midias/vacina-3.jpg" alt="Cachorro tomando vacina">
+            </div>
+        </div>
+        <div class="ondas">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="svg-2">
+                <path fill="#ffff66" fill-opacity="1" d="M0,64L48,64C96,64,192,64,288,74.7C384,85,480,107,576,133.3C672,160,768,192,864,186.7C960,181,1056,139,1152,149.3C1248,160,1344,224,1392,256L1440,288L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+            </svg>
+        </div>
+        <div class="main-3">
+            <div class="div-central-main-3">
+                <div class="titulo-main-3">
+                    <h2>
+                        Dúvidas Frequentes:
+                    </h2>
+                </div>
+                <div class="menu-duvidas">
+                    <div class="menu-duvidas-1">
+                        <div class="duvidas duvida-1">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Com que frequência meu pet deve tomar banho e ser tosado?
+                            </h3>
+                            <p>
+                                A resposta pode variar de acordo com a raça e o tipo de pelagem, mas em geral, recomenda-se um banho a cada 2 a 4 semanas e tosa conforme a necessidade.
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-2">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Preciso agendar uma consulta veterinária com antecedência?
+                            </h3>
+                            <p>
+                                Sim, o agendamento antecipado ajuda a garantir um horário e evitar esperas. No entanto, atendemos emergências de acordo com a disponibilidade.
+
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-3">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Meu pet está com medo do banho e da tosa. O que posso fazer?
+                            </h3>
+                            <p>
+                                Nossa equipe é treinada para lidar com pets ansiosos e utiliza técnicas para acalmá-los, tornando o processo o mais agradável possível.
+
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-4">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Quais vacinas meu pet precisa estar em dia para o atendimento?
+                            </h3>
+                            <p>
+                                Pedimos que todos os pets estejam com as vacinas essenciais atualizadas, como a antirrábica e a múltipla, para garantir a segurança de todos.
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-5">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Vocês oferecem serviços de banho e tosa para todas as raças?
+                            </h3>
+                            <p>
+                                Sim, atendemos todas as raças e portes de cães e gatos, adaptando o serviço conforme a necessidade de cada pet.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="menu-duvidas-2">
+                        <div class="duvidas duvida-6">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> É possível ficar acompanhando meu pet durante o atendimento?
+                            </h3>
+                            <p>
+                                Sim, permitimos que os tutores acompanhem de maneira segura, respeitando as regras de higiene e segurança do pet shop.
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-7">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Quais produtos são usados durante o banho e tosa?
+                            </h3>
+                            <p>
+                                Utilizamos produtos de alta qualidade e adequados para cada tipo de pele e pelagem, priorizando opções hipoalergênicas e seguras.
+
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-8">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> O que devo trazer no dia do banho, tosa ou consulta veterinária?
+                            </h3>
+                            <p>
+                                Recomendamos que o tutor traga a carteira de vacinação do pet e, para os mais ansiosos, um brinquedo ou item que ele goste para deixá-lo mais confortável.
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-9">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Vocês têm descontos para clientes frequentes?
+                            </h3>
+                            <p>
+                                Sim, oferecemos um programa de fidelidade para clientes regulares, com descontos e benefícios especiais.
+                            </p>
+                        </div>
+                        <div class="duvidas duvida-10">
+                            <h3>
+                                <span class="btn-duvidas">▶</span> Qual é o horário de funcionamento do pet shop?
+                            </h3>
+                            <p>
+                                Nosso horário é de segunda a sexta das 9:00 às 18:00 e aos sábados das 8:00 às 15:00
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div>
+        <a href="/" class="footer-logo">
+            <img src="../static/midias/Logo3.png" alt="Logo do Petshop Raio de Sol" class="logo-footer">
+        </a>
+    </div>
+    <footer>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-1">
+                <img class="icone-footer" src="../static/midias/localizacao.png" alt="Icone de localização">
+                <h2 class="h2-footer">Localização</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    Rua São Paulo, n°1629 <br> <br> Itoupava Seca, Blumenau - SC <br> <br> CEP: 89030-001
+                </h3>
+            </div>
+        </div>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-2">
+                <img class="icone-footer" src="../static/midias/contato.png" alt="Icone de contato">
+                <h2 class="h2-footer">Contatos</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    (47) 3036-5490 <br> <br> (47) 98761-9632 <br> <br> omelhorpetshop@raiodesol.com
+                </h3>
+            </div>
+        </div>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-3">
+                <img class="icone-footer" src="../static/midias/atendimento.png" alt="Icone de horário">
+                <h2 class="h2-footer">Atendimento</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    De segunda a sexta: <br> 9:00 às 18:00 <br>
+                    <br> Aos Sábados: <br> 8:00 às 15:00
+                </h3>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Função para abrir o modal
+        function openModal() {
+            document.getElementById("loginModal").style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        // Função para fechar o modal
+        function closeModal() {
+            document.getElementById("loginModal").style.display = "none";
+            document.body.style.overflow = "";
+        }
+    </script>
+</body>
+
+</html>

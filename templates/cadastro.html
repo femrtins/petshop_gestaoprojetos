@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="py-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/cadastro.css">
+    <link rel="icon" type="image/jpg" href="../static/midias/logo-site.jpg" />
+
+    <title>
+        Raio de Sol - Cadastro
+    </title>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-1">
+                <a href="/">
+                    <img class="logo" src="../static/midias/Logo3.png" alt="Logo do Petshop Raio de Sol">
+                </a>
+            </div>
+            <div class="nav-2">
+                <button class="nav-btn nav-btn-1" onclick="openModal()">
+                    Entrar
+                </button>
+                <a href="/cadastro">
+                    <button class="nav-btn nav-btn-2">
+                        Cadastrar
+                    </button>
+                </a>
+            </div>
+        </nav>
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <button class="close-button" onclick="closeModal()">x</button>
+                <h2>Login</h2>
+                <form action="/login" method="POST" class="form-login">
+                    <div class="opcoes-radio">
+                        <label>
+                            <input type="radio" name="radio" value="funcionario" class="radio">
+                            Funcionário
+                        </label>
+                        <label>
+                            <input type="radio" name="user-type" value="cliente" class="radio">
+                            Cliente
+                        </label>
+                    </div>
+                    <input type="email" placeholder="E-mail" class="email-login" id="email" name="email">
+                    <input type="password" placeholder="Senha" class="password-login" id="senha" name="senha">
+                    <button type="submit">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <div class="div-central">
+            <h2>Cadastre-se</h2>
+            <form action="/cadastro" method="POST" class="formulario">
+                <div class="form-1">
+                    <input type="text" placeholder="Nome" class="nome input" id="nome" name="nome">
+                    <input type="text" placeholder="CPF" class="cpf input" id="cpf" name="cpf">
+                </div>
+                <div class="form-2">
+                    <input type="tel" placeholder="Celular" class="cel input" id="celular" name="celular">
+                    <input type="email" placeholder="E-mail" class="email input" id="email" name="email">
+                </div>
+                <div class="form-3">
+                    <input type="text" placeholder="Rua" class="rua input" id="rua" name="rua">
+                    <input type="text" placeholder="Número" class="numero input" id="numero" name="numero">
+                </div>
+                <div class="form-4">
+                    <input type="text" placeholder="Bairro" class="bairro input" id="bairro" name="bairro">
+                    <input type="text" placeholder="Cidade" class="cidade input" id="cidade" name="cidade">
+                </div>
+                <div class="form-5">
+                    <input type="password" placeholder="Senha" class="senha input" id="senha" name="senha">
+                    <input type="password" placeholder="Confirme sua senha" class="confirmar-senha input" id="confirmar-senha" name="confirmar-senha">
+                </div>
+                <div class="form-btn">
+                    <button class="btn-formulario" type="submit">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <div>
+        <a href="/" class="footer-logo">
+            <img src="../static/midias/Logo3.png" alt="Logo do Petshop Raio de Sol" class="logo-footer">
+        </a>
+    </div>
+    <footer>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-1">
+                <img class="icone-footer" src="../static/midias/localizacao.png" alt="Icone de localização">
+                <h2 class="h2-footer">Localização</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    Rua São Paulo, n°1629 <br> <br> Itoupava Seca, Blumenau - SC <br> <br> CEP: 89030-001
+                </h3>
+            </div>
+        </div>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-2">
+                <img class="icone-footer" src="../static/midias/contato.png" alt="Icone de contato">
+                <h2 class="h2-footer">Contatos</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    (47) 3036-5490 <br> <br> (47) 98761-9632 <br> <br> omelhorpetshop@raiodesol.com
+                </h3>
+            </div>
+        </div>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-3">
+                <img class="icone-footer" src="../static/midias/atendimento.png" alt="Icone de horário">
+                <h2 class="h2-footer">Atendimento</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    De segunda a sexta: <br> 9:00 às 18:00 <br>
+                    <br> Aos Sábados: <br> 8:00 às 15:00
+                </h3>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Função para abrir o modal
+        function openModal() {
+            document.getElementById("loginModal").style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        // Função para fechar o modal
+        function closeModal() {
+            document.getElementById("loginModal").style.display = "none";
+            document.body.style.overflow = "";
+        }
+    </script>
+</body>
+
+</html>

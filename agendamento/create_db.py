@@ -1,4 +1,4 @@
-from app.app import db, app
+from app import db, app
 from app.models import Colaborador, Cliente
 from werkzeug.security import generate_password_hash
 

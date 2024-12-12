@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Acme&display=swap');
+
+* {
+    margin: 0px;
+    padding: 0px;
+    text-decoration: none;
+}
+
+body {
+    background-color: #e6ffff;
+    font-family: "Lato", sans-serif;
+}
+
+
+
+.header {
+    box-shadow: 0px 5px 5px -3px black;
+    background-color: #ffff66;
+}
+
+.nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+
+.nav-1 {
+    display: flex;
+    justify-content: center;
+    flex-basis: 50%;
+}
+
+.nav-2 {
+    display: flex;
+    justify-content: center;
+    flex-basis: 50%;
+}
+
+.logo {
+    width: 220px;
+    height: auto;
+}
+
+.nav-btn {
+    margin-top: 5px;
+    padding: 6px 0px 6px 0px;
+    border-radius: 10px;
+    border: 1px solid black;
+    width: 150px;
+    font-size: 16px;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    background-color: #ffff66;
+    color: black;
+    transition: 0.2s all;
+}
+
+.nav-btn:hover {
+    cursor: pointer;
+    background-color: #e6ffff;
+}
+
+.nav-btn-1, .nav-btn-2, .nav-btn-4 {
+    display: none;
+}
+
+.nav-btn-3, .nav-btn-5, .nav-btn-6 {
+    margin-right: 30px;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.div-central {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffff66;
+    border-radius: 20px;
+    padding: 50px;
+    width: 60%;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.div-titulo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 35px;
+}
+
+.titulo-perfil {
+    font-size: 35px;
+    font-family: "Lato", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 1px;
+}
+
+.div-perfil {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.perfil-1, .perfil-2, .perfil-3, .perfil-4 {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: auto;
+}
+
+.perfil-1, .perfil-2, .perfil-3 {
+    margin-bottom: 25px;
+}
+
+.nome, .cpf, .cel, .email, .rua, .numero, .bairro, .cidade {
+    width: 90%;
+    margin: auto;
+    border: none;
+    font-size: 16px;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.btn-salvar {
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 300px;
+    padding: 8px;
+    font-size: 16px;
+    font-family: "Lato", sans-serif;
+    font-weight: bold;
+    font-style: normal;
+    background-color: #ffff66;
+    margin-top: 35px;
+    transition: 0.4s all;
+}
+
+.btn-salvar:hover {
+    cursor: pointer;
+    background-color: #42b948;
+}
+
+footer {
+    display: flex;
+    background-color: #ffff66;
+    justify-content: space-evenly;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.footer-logo {
+    display: flex;
+    justify-content: center;
+}
+
+.logo-footer {
+    width: 150px;
+    background-color: #ffff66;
+    padding: 15px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.div-footer {
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+}
+
+.titulo-footer {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    padding-bottom: 20px;
+}
+
+.titulo-1 {
+    margin-left: 55px;
+}
+
+.titulo-2 {
+    margin-left: 45px;
+}
+
+.titulo-3 {
+    margin-left: 95px;
+}
+
+.icone-footer {
+   width: 30px;
+   height: auto;
+   margin-right: 15px;
+}
+
+.h2-footer {
+    font-size: 20px;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.conteudo-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.h3-footer {
+    font-size: 18px;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}

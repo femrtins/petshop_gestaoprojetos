@@ -1,7 +1,7 @@
-from app.app import app, db
+from app import app, db
 from flask import render_template, request, redirect, url_for, flash, abort, jsonify
-from app.forms import AgendamentoForm, ColaboradorForm, ClienteForm, PetForm, AgendamentoEditForm
-from app.models import Agendamento, Colaborador, Cliente, Pet, Estoque
+from forms import AgendamentoForm, ColaboradorForm, ClienteForm, PetForm, AgendamentoEditForm
+from models import Agendamento, Colaborador, Cliente, Pet, Estoque
 from datetime import datetime
 from flask_login import login_required, current_user, logout_user, login_user
 from functools import wraps
@@ -280,7 +280,7 @@ def cadastroCliente():
             
             if senha != confSenha:
                 flash("As senhas não coincidem!")
-                return redirect(url_for('cadastroCliente'))
+                return redirect(url_for('cadastro.html'))
             
             cliente = Cliente(nome=nome, email=email, cpf=cpf, celular=celular, endRua=endRua, endNumero=endNumero, endComplemento=endComplemento, senha=senha, temAnimal=temAnimal)
             
@@ -304,7 +304,7 @@ def cadastroCliente():
             return redirect(url_for('index'))
 
     flash_errors(form)
-    return render_template('cadastroCliente.html', form=form)
+    return render_template('cadastro.html', form=form)
 
 
 @app.route("/cadastrarAnimal", methods=['POST', 'GET'])
@@ -447,15 +447,22 @@ def login():
     if request.method == 'POST':
         email = request.form.get("email")
         senha = request.form.get("senha")
-
-        cliente = db.session.query(Cliente).filter(Cliente.email == email).first()
+        cliente = False
+        colaborador = False
+        try:
+            cliente = db.session.query(Cliente).filter(Cliente.email == email).first()
+        except:
+            pass
         if cliente:
             if cliente.senha == senha:
                 login_user(cliente)
                 return redirect(url_for('index'))
 
         else:
-            colaborador = db.session.query(Colaborador).filter(Colaborador.email == email).first()
+            try:
+                colaborador = db.session.query(Colaborador).filter(Colaborador.email == email).first()
+            except:
+                pass
             if colaborador:
                 if colaborador.senha == senha:
                     login_user(colaborador)
@@ -463,7 +470,7 @@ def login():
             else:
                 flash("Email não encontrado.", "danger")
 
-    return render_template('login.html')
+    return render_template('index.html')
 
 @app.route('/deslogar')
 @login_required

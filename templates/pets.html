@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/pets.css">
+
+    <title>
+        Raio de Sol - Pets
+    </title>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-1">
+                <a href="/">
+                    <img class="logo" src="../static/midias/Logo3.png" alt="Logo do Petshop Raio de Sol">
+                </a>
+            </div>
+            <div class="nav-2">
+                <button class="nav-btn nav-btn-1" onclick="openModal()">
+                    Entrar
+                </button>
+                <a href="/cadastro">
+                    <button class="nav-btn nav-btn-2">
+                        Cadastrar
+                    </button>
+                </a>
+                <a href="/Pets">
+                    <button class="nav-btn nav-btn-3">
+                        Pets
+                    </button>
+                </a>
+                <a href="./estoque.html">
+                    <button class="nav-btn nav-btn-4">
+                        Estoque
+                    </button>
+                </a>
+                <a href="/Agendar">
+                    <button class="nav-btn nav-btn-5">
+                        Agendar
+                    </button>
+                </a>
+                <a href="/Perfil">
+                    <button class="nav-btn nav-btn-6">
+                        Perfil
+                    </button>
+                </a>
+                <button class="nav-btn nav-btn-7">
+                    Sair
+                </button>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Animais Cadastrados</h1>
+        <button id="addAnimalBtn">Adicionar Animal</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome do Tutor</th>
+                    <th>Nome do Pet</th>
+                    <th>Tipo</th>
+                    <th>Raça</th>
+                    <th>Idade</th>
+                </tr>
+            </thead>
+            <tbody id="animal-list">
+                <!-- Animais cadastrados -->
+                <tr>
+                    <td ondblclick="editCell(this)">João</td>
+                    <td ondblclick="editCell(this)">Rex</td>
+                    <td ondblclick="editCell(this)">Cachorro</td>
+                    <td ondblclick="editCell(this)">Labrador</td>
+                    <td ondblclick="editCell(this)">3</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2 style="text-align: center;">Adicionar Novo Animal</h2>
+            <form id="animalForm">
+                <label for="nome-tutor">Nome do Tutor:</label>
+                <input type="text" id="nome-tutor" name="nome-tutor" placeholder="Digite o nome do tutor" required>
+
+                <label for="nome-pet">Nome do Pet:</label>
+                <input type="text" id="nome-pet" name="nome-pet" placeholder="Digite o nome do pet" required>
+
+                <label for="tipo-animal">Tipo do Animal:</label>
+                <select id="tipo-animal" name="tipo-animal" required>
+                    <option value="" disabled selected>Selecione o tipo</option>
+                    <option value="cachorro">Cachorro</option>
+                    <option value="gato">Gato</option>
+                    <option value="outro">Outro</option>
+                </select>
+
+                <label for="raca">Raça:</label>
+                <input type="text" id="raca" name="raca" placeholder="Digite a raça do animal" required>
+
+                <label for="idade">Idade:</label>
+                <input type="number" id="idade" name="idade" placeholder="Digite a idade do animal" required>
+
+                <button type="button" id="saveAnimalBtn">Salvar</button>
+            </form>
+        </div>
+    </div>
+    <div>
+        <a href="/" class="footer-logo">
+            <img src="../static/midias/Logo3.png" alt="Logo do Petshop Raio de Sol" class="logo-footer">
+        </a>
+    </div>
+    <footer>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-1">
+                <img class="icone-footer" src="../static/midias/localizacao.png" alt="Icone de localização">
+                <h2 class="h2-footer">Localização</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    Rua São Paulo, n°1629 <br> <br> Itoupava Seca, Blumenau - SC <br> <br> CEP: 89030-001
+                </h3>
+            </div>
+        </div>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-2">
+                <img class="icone-footer" src="../static/midias/contato.png" alt="Icone de contato">
+                <h2 class="h2-footer">Contatos</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    (47) 3036-5490 <br> <br> (47) 98761-9632 <br> <br> omelhorpetshop@raiodesol.com
+                </h3>
+            </div>
+        </div>
+        <div class="div-footer">
+            <div class="titulo-footer titulo-3">
+                <img class="icone-footer" src="../static/midias/atendimento.png" alt="Icone de horário">
+                <h2 class="h2-footer">Atendimento</h2>
+            </div>
+            <div class="conteudo-footer">
+                <h3 class="h3-footer">
+                    De segunda a sexta: <br> 9:00 às 18:00 <br>
+                    <br> Aos Sábados: <br> 8:00 às 15:00
+                </h3>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Referências aos elementos
+        const modal = document.getElementById('modal');
+        const addAnimalBtn = document.getElementById('addAnimalBtn');
+        const closeModal = document.getElementById('closeModal');
+        const saveAnimalBtn = document.getElementById('saveAnimalBtn');
+        const animalList = document.getElementById('animal-list');
+
+        // Abrir o modal
+        addAnimalBtn.onclick = () => {
+            modal.style.display = 'flex';
+        };
+
+        // Fechar o modal
+        closeModal.onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        // Fechar o modal clicando fora
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Salvar novo animal
+        saveAnimalBtn.onclick = () => {
+            const nomeTutor = document.getElementById('nome-tutor').value;
+            const nomePet = document.getElementById('nome-pet').value;
+            const tipoAnimal = document.getElementById('tipo-animal').value;
+            const raca = document.getElementById('raca').value;
+            const idade = document.getElementById('idade').value;
+
+            if (nomeTutor && nomePet && tipoAnimal && raca && idade) {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td ondblclick="editCell(this)">${nomeTutor}</td>
+                    <td ondblclick="editCell(this)">${nomePet}</td>
+                    <td ondblclick="editCell(this)">${tipoAnimal}</td>
+                    <td ondblclick="editCell(this)">${raca}</td>
+                    <td ondblclick="editCell(this)">${idade}</td>
+                `;
+                animalList.appendChild(newRow);
+                document.getElementById('animalForm').reset();
+                modal.style.display = 'none';
+            } else {
+                alert('Por favor, preencha todos os campos.');
+            }
+        };
+
+        // Função para editar célula
+        function editCell(cell) {
+            const originalValue = cell.innerText;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = originalValue;
+            cell.innerHTML = '';
+            cell.appendChild(input);
+            input.focus();
+
+            input.onblur = () => {
+                cell.innerText = input.value || originalValue;
+            };
+
+            input.onkeydown = (event) => {
+                if (event.key === 'Enter') {
+                    cell.innerText = input.value || originalValue;
+                }
+            };
+        }
+    </script>
+</body>
+
+</html>
