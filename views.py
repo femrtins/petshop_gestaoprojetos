@@ -198,57 +198,43 @@ def edit_agendamento(id):
 def cadastroColaborador():
     print(current_user)
 
-    form = ColaboradorForm()
-
     if request.method == 'POST':
-        if form.validate_on_submit():
-            
-            nome = form.nome.data 
-            email = form.email.data 
-            celular = form.celular.data
-            cpf = form.cpf.data
-            endRua = form.endRua.data
-            endNumero = form.endNumero.data
-            endComplemento = form.endComplemento.data
-            senha = form.senha.data
-            confSenha = form.confirmar_senha.data
-            cargo = form.cargo.data
-            salario = form.salario.data
-            status = form.status.data
-            
-            if senha != confSenha:
-                flash("As senhas não coincidem!")
-                return redirect(url_for('cadastroColaborador'))
-            
-            colaborador = Colaborador(nome=nome, email=email, celular=celular, cpf=cpf, endRua=endRua, endNumero=endNumero, endComplemento=endComplemento,
-                                      senha=senha, cargo=cargo, salario=salario, status=status)
-            
-            try:
-
-                '''
-                
-                Precisa verificar se o colaborador que está adicionando outro é o adminitrador root
-                
-                '''
-
-                # Verifica se o colaborador já foi cadastrado
-                # db.session... Retorna 'None' caso não encontre nada 
-                if  ((db.session.query(Colaborador).filter(Colaborador.email == colaborador.email).first()) or \
-                    (db.session.query(Colaborador).filter(Colaborador.cpf == colaborador.cpf).first())) != None :
-                    return "Erro"
-
-                db.session.add(colaborador)
-                db.session.commit()
-                flash('Colaborador adicionado com sucesso')
-
-            except Exception as e:
-                print(str(e))
+        
+        nome = request.form.get("nome") 
+        email = request.form.get("email") 
+        cpf = request.form.get("cpf")
+        celular = request.form.get("celular")
+        endRua = request.form.get("rua")
+        endNumero = request.form.get("numero")
+        endComplemento = request.form.get("bairro")
+        senha = request.form.get("senha")
+        confSenha = request.form.get("confirmar-senha")
+        cargo = request.form.get("cargo")
+        salario = request.form.get("salario")
+        status = request.form.get("status")
+        
+        if senha != confSenha:
+            flash("As senhas não coincidem!")
+            return redirect(url_for('cadastroColaborador'))
+        
+        colaborador = Colaborador(nome=nome, email=email, celular=celular, cpf=cpf, endRua=endRua, endNumero=endNumero, endComplemento=endComplemento,
+                                  senha=senha, cargo=cargo, salario=salario, status=status)
+        
+        try:
+            # Verifica se o colaborador já foi cadastrado
+            # db.session... Retorna 'None' caso não encontre nada 
+            if  ((db.session.query(Colaborador).filter(Colaborador.email == colaborador.email).first()) or \
+                (db.session.query(Colaborador).filter(Colaborador.cpf == colaborador.cpf).first())) != None :
                 return "Erro"
+            db.session.add(colaborador)
+            db.session.commit()
+            flash('Colaborador adicionado com sucesso')
+        except Exception as e:
+            print(str(e))
+            return "Erro"
+        return redirect(url_for('index'))
 
-            return redirect(url_for('index'))
-
-    flash_errors(form)
-    return render_template('cadastroColaborador.html', form=form)
+    return render_template('cadastroColaborador.html')
 
 def flash_errors(form):
     for field, errors in form.errors.items():
