@@ -234,7 +234,7 @@ def cadastroColaborador():
             return "Erro"
         return redirect(url_for('index'))
 
-    return render_template('cadastroColaborador.html')
+    return render_template('cadastro.html')
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -294,16 +294,15 @@ def cadastroCliente():
 @app.route("/cadastrarAnimal", methods=['POST', 'GET'])
 @login_required
 def cadastroPet():
-    form = PetForm()
     
     if request.method == 'POST':
-        if form.validate_on_submit():
-            pet = Pet()
-            pet.clienteId = current_user.id
-            pet.nome = form.nome.data 
-            pet.especie = form.especie.data 
-            pet.raca = form.raca.data 
-            pet.anoNasc = form.anoNasc.data 
+        
+        pet = Pet()
+        pet.clienteId = current_user.id
+        pet.nome = request.form.get("nome") 
+        pet.especie = request.form.get("especie")
+        pet.raca = request.form.get("raca")
+        pet.anoNasc = request.form.get("anoNasc")
 
         try:
             db.session.add(pet)
@@ -316,8 +315,7 @@ def cadastroPet():
 
         return redirect(url_for('index'))
 
-    flash_errors(form)
-    return render_template('cadastroPet.html', form=form)
+    return render_template('cadastroPet.html')
 
 @app.route("/alterarDadosColaborador/<int:id>", methods=['POST', 'GET'])
 @login_required
